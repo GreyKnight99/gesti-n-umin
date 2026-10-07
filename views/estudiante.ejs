@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UMIN - Portal Estudiante</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Portal Estudiante - UMIN</h1>
+        <div>
+            <span>Estudiante: <strong><%= usuario.nombre %></strong></span> | 
+            <a href="/logout" style="color: #fff; text-decoration: underline;">Cerrar Sesión</a>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <ul>
+                <li><a href="#calificaciones">Boleta de Calificaciones</a></li>
+                <li><a href="#pagos">Pagos y Estado de Cuenta</a></li>
+                <li><a href="#pagos-metodos">Pagos de Inscripción y Métodos de Pago</a></li>
+            </ul>
+        </aside>
+
+        <main class="content">
+            <!-- Boleta de Calificaciones -->
+            <section id="calificaciones" class="card">
+                <h2>Boleta de Calificaciones</h2>
+                <% if (calificaciones.length === 0) { %>
+                    <p style="margin-top: 1rem;">No hay calificaciones registradas por el momento.</p>
+                <% } else { %>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Materia / Curso</th>
+                                <th>Unidad</th>
+                                <th>Calificación</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% calificaciones.forEach(cal => { %>
+                                <tr>
+                                    <td><%= cal.curso %></td>
+                                    <td>Unidad <%= cal.unidad %></td>
+                                    <td><strong><%= cal.calificacion %></strong></td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                <% } %>
+            </section>
+
+            <!-- Estado de Cuenta y Pagos Pendientes -->
+            <section id="pagos" class="card">
+                <h2>Estado de Cuenta y Pagos Pendientes</h2>
+                <% if (pagos.length === 0) { %>
+                    <p style="margin-top: 1rem;">No tienes colegiaturas ni pagos registrados en tu estado de cuenta.</p>
+                <% } else { %>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Concepto</th>
+                                <th>Monto</th>
+                                <th>Fecha Vencimiento</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% pagos.forEach(p => { %>
+                                <tr>
+                                    <td><%= p.concepto %></td>
+                                    <td>$<%= p.monto %> MXN</td>
+                                    <td><%= p.fecha_vencimiento ? new Date(p.fecha_vencimiento).toLocaleDateString() : 'N/A' %></td>
+                                    <td>
+                                        <% if (p.estado === 'pendiente') { %>
+                                            <span style="color: #E05326; font-weight: bold;">Pendiente</span>
+                                        <% } else { %>
+                                            <span style="color: green; font-weight: bold;">Pagado</span>
+                                        <% } %>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                <% } %>
+            </section>
+            <!-- Sección: Pagos de Inscripción y Métodos de Pago -->
+<section id="pagos-metodos" class="card">
+    <h2>Pagos de Inscripción y Métodos de Pago</h2>
+
+    <!-- Notificaciones Enviadas por el Administrador -->
+    <div style="margin-top: 1.5rem;">
+        <h3 style="color: var(--primary-color);">Avisos y Periodos de Pago Publicados</h3>
+        <% if (typeof notificacionesPagos !== 'undefined' && notificacionesPagos.length > 0) { %>
+            <% notificacionesPagos.forEach(notif => { %>
+                <div style="border-left: 4px solid var(--primary-color); background: #fff8f5; padding: 1rem; margin-top: 1rem; border-radius: 4px;">
+                    <h4 style="color: var(--dark-color);"><%= notif.titulo %></h4>
+                    <p style="margin: 0.5rem 0;"><%= notif.mensaje %></p>
+                    <p style="font-size: 0.9rem; color: #555;">
+                        <strong>Monto:</strong> $<%= notif.monto %> MXN | 
+                        <strong>Fecha Límite:</strong> <%= new Date(notif.fecha_limite).toLocaleDateString() %>
+                    </p>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <p style="margin-top: 0.5rem; color: #666;">No hay notificaciones sobre periodos de inscripción vigentes.</p>
+        <% } %>
+    </div>
+
+    <!-- Procedimientos e Instructivos de Pago -->
+    <div style="margin-top: 2rem;">
+        <h3 style="color: var(--primary-color); margin-bottom: 1rem;">Instrucciones para Realizar tu Pago</h3>
+        
+        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+            <!-- Opción 1: Pago Físico -->
+            <div style="flex: 1; min-width: 280px; border: 1px solid #ddd; padding: 1.2rem; border-radius: 8px; background: #fff;">
+                <h4 style="color: var(--secondary-color); font-size: 1.1rem; margin-bottom: 0.5rem;">🏢 Pago en Ventanilla / Presencial (Físico)</h4>
+                <ol style="margin-left: 1.2rem; line-height: 1.6;">
+                    <li>Acude a las cajas del Departamento de Finanzas del Campus UMIN.</li>
+                    <li>Proporciona tu **Nombre Completo** y tu **Matrícula de Estudiante**.</li>
+                    <li>Indica el concepto del pago (*Inscripción* o *Colegiatura*).</li>
+                    <li>Puedes pagar en **Efectivo**, **Tarjeta de Débito** o **Tarjeta de Crédito**.</li>
+                    <li>Conserva el **Comprobante Oficial firmado y sellado** por el cajero.</li>
+                </ol>
+            </div>
+
+            <!-- Opción 2: Pago Online / Transferencia -->
+            <div style="flex: 1; min-width: 280px; border: 1px solid #ddd; padding: 1.2rem; border-radius: 8px; background: #fff;">
+                <h4 style="color: var(--primary-color); font-size: 1.1rem; margin-bottom: 0.5rem;">💻 Pago Online / Transferencia SPEI</h4>
+                <ol style="margin-left: 1.2rem; line-height: 1.6;">
+                    <li>Ingresa a la aplicación bancaria de tu preferencia.</li>
+                    <li>Realiza una transferencia **SPEI** con los siguientes datos:
+                        <ul style="list-style: none; margin-top: 0.3rem; font-size: 0.95rem; color: #444;">
+                            <li><strong>Banco:</strong> BBVA México</li>
+                            <li><strong>CLABE:</strong> 012 180 00123456789 0</li>
+                            <li><strong>Beneficiario:</strong> Universidad UMIN A.C.</li>
+                        </ul>
+                    </li>
+                    <li>En el **Concepto de Pago**, escribe tu **Matrícula + Primer Apellido** (ej. *202601 Perez*).</li>
+                    <li>Envía tu comprobante de pago en formato PDF o imagen al correo: `pagos@umin.edu.mx`.</li>
+                    </ol>
+                </div>
+             </div>
+           </div>
+        </section>
+        </main>
+    </div>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UMIN - Registro de Cuenta</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <h2>Crear Cuenta UMIN</h2>
+
+            <% if (typeof error !== 'undefined') { %>
+                <p style="color: #E05326; background-color: #fde8e8; padding: 0.8rem; border-radius: 6px; text-align: center; margin-bottom: 1rem; font-weight: bold;">
+                    <%= error %>
+                </p>
+            <% } %>
+
+            <form action="/register" method="POST">
+                <div class="form-group">
+                    <label>Nombre Completo</label>
+                    <input type="text" name="nombre" required placeholder="ej. Carlos Pérez">
+                </div>
+                <div class="form-group">
+                    <label>Correo Electrónico</label>
+                    <input type="email" name="email" required placeholder="correo@umin.edu.mx">
+                </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" name="password" required placeholder="******">
+                </div>
+                <div class="form-group">
+                    <label>Tipo de Usuario (Rol)</label>
+                    <select name="rol" id="selectRol" onchange="toggleAdminKey()" required>
+                        <option value="estudiante">Estudiante</option>
+                        <option value="docente">Docente</option>
+                        <option value="administrador">Administrador</option>
+                    </select>
+                </div>
+
+                <!-- Campo Adicional: Clave de Seguridad para Administrador -->
+                <div class="form-group" id="adminKeyGroup" style="display: none;">
+                    <label style="color: #E05326;">Clave de Seguridad Administrador</label>
+                    <input type="password" name="admin_key" id="adminKeyInput" placeholder="Ingrese la clave maestra">
+                </div>
+
+                <button type="submit" class="btn-primary">Registrarse</button>
+            </form>
+
+            <p style="margin-top: 1rem; text-align: center;">
+                ¿Ya tienes una cuenta? <a href="/login">Inicia Sesión</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function toggleAdminKey() {
+            const rolSelect = document.getElementById('selectRol');
+            const adminKeyGroup = document.getElementById('adminKeyGroup');
+            const adminKeyInput = document.getElementById('adminKeyInput');
+
+            if (rolSelect.value === 'administrador') {
+                adminKeyGroup.style.display = 'block';
+                adminKeyInput.setAttribute('required', 'required');
+            } else {
+                adminKeyGroup.style.display = 'none';
+                adminKeyInput.removeAttribute('required');
+                adminKeyInput.value = '';
+            }
+        }
+    </script>
+</body>
+</html>

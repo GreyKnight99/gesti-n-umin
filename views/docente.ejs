@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UMIN - Portal Docente</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Portal Docente - UMIN</h1>
+        <div>
+            <span>Profesor(a): <strong><%= usuario.nombre %></strong></span> | 
+            <a href="/logout" style="color: #fff; text-decoration: underline;">Cerrar Sesión</a>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <ul>
+                <li><a href="#calificaciones">Subir Calificaciones</a></li>
+                <li><a href="#asistencia">Pasar Lista</a></li>
+                <li><a href="#publicaciones">Publicar Tarea / Material</a></li>
+            </ul>
+        </aside>
+
+        <main class="content">
+            <!-- Cursos Asignados -->
+            <div class="card">
+                <h2>Mis Cursos Asignados</h2>
+                <% if (cursos.length === 0) { %>
+                    <p>No tienes cursos asignados actualmente.</p>
+                <% } else { %>
+                    <ul>
+                        <% cursos.forEach(c => { %>
+                            <li><strong>[<%= c.codigo %>]</strong> <%= c.nombre %></li>
+                        <% }) %>
+                    </ul>
+                <% } %>
+            </div>
+
+            <!-- Subir Calificaciones -->
+            <section id="calificaciones" class="card">
+                <h2>Subir Calificaciones</h2>
+                <form action="/docente/subir-calificacion" method="POST" style="margin-top: 1rem;">
+                    <div class="form-group">
+                        <label>ID de Matrícula (Estudiante - Curso)</label>
+                        <input type="number" name="id_matricula" placeholder="Ingrese ID de Matrícula" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Unidad / Parcial</label>
+                        <input type="number" name="unidad" min="1" max="5" placeholder="ej. 1" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Calificación (0 - 100)</label>
+                        <input type="number" step="0.01" name="calificacion" placeholder="ej. 95.5" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Registrar Calificación</button>
+                </form>
+            </section>
+
+            <!-- Pasar Lista -->
+            <section id="asistencia" class="card">
+                <h2>Pase de Lista</h2>
+                <form action="/docente/pasar-lista" method="POST" style="margin-top: 1rem;">
+                    <div class="form-group">
+                        <label>ID de Matrícula del Estudiante</label>
+                        <input type="number" name="id_matricula" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha</label>
+                        <input type="date" name="fecha" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Estatus de Asistencia</label>
+                        <select name="presente" required>
+                            <option value="1">Presente</option>
+                            <option value="0">Ausente / Inasistencia</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-primary">Guardar Asistencia</button>
+                </form>
+            </section>
+
+            <!-- Dejar Tareas y Material de Clase -->
+            <section id="publicaciones" class="card">
+                <h2>Publicar Material de Clase o Tarea</h2>
+                <form action="/docente/publicar" method="POST" style="margin-top: 1rem;">
+                    <div class="form-group">
+                        <label>Seleccionar Curso</label>
+                        <select name="id_curso" required>
+                            <% cursos.forEach(c => { %>
+                                <option value="<%= c.id %>"><%= c.nombre %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo de Publicación</label>
+                        <select name="tipo" required>
+                            <option value="tarea">Tarea</option>
+                            <option value="material">Material de Estudio</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Título</label>
+                        <input type="text" name="titulo" required placeholder="ej. Guía de Estudio Parcial 1">
+                    </div>
+                    <div class="form-group">
+                        <label>Instrucciones o Contenido</label>
+                        <textarea name="contenido" rows="4" style="width: 100%; padding: 0.5rem;" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Publicar</button>
+                </form>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

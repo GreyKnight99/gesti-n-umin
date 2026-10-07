@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UMIN - Portal Administrador</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Portal Administrador - UMIN</h1>
+        <div>
+            <span>Bienvenido, <strong><%= usuario.nombre %></strong></span> | 
+            <a href="/logout" style="color: #fff; text-decoration: underline;">Cerrar Sesión</a>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        <!-- Barra Lateral -->
+        <aside class="sidebar">
+            <ul>
+                <li><a href="#ciclos">Ciclos Escolares</a></li>
+                <li><a href="#cursos">Cursos y Docentes</a></li>
+                <li><a href="#matriculas">Matricular Estudiante</a></li>
+                <li><a href="#notificaciones-pagos">Notificar Pagos</a></li>
+                <li><a href="#reportes">Reportes Generales</a></li>
+            </ul>
+        </aside>
+
+        <!-- Contenido Principal -->
+        <main class="content">
+            <!-- Sección: Crear Ciclo Escolar -->
+            <section id="ciclos" class="card">
+                <h2>Crear Ciclo Escolar</h2>
+                <form action="/admin/crear-ciclo" method="POST" style="margin-top: 1rem;">
+                    <div class="form-group">
+                        <label>Nombre del Ciclo (ej. 2026-1)</label>
+                        <input type="text" name="nombre" required placeholder="ej. 2026-1">
+                    </div>
+                    <div style="display: flex; gap: 1rem;">
+                        <div class="form-group" style="flex: 1;">
+                            <label>Fecha Inicio</label>
+                            <input type="date" name="fecha_inicio" required>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Fecha Fin</label>
+                            <input type="date" name="fecha_fin" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary">Crear Ciclo Escolar</button>
+                </form>
+            </section>
+
+            <!-- Sección: Crear y Asignar Cursos a Docentes -->
+            <section id="cursos" class="card">
+                <h2>Asignación de Docentes a Cursos</h2>
+                <form action="/admin/crear-curso" method="POST" style="margin-top: 1rem;">
+                    <div class="form-group">
+                        <label>Nombre de la Materia / Curso</label>
+                        <input type="text" name="nombre" required placeholder="ej. Cálculo Diferencial">
+                    </div>
+                    <div class="form-group">
+                        <label>Código Único de Curso</label>
+                        <input type="text" name="codigo" required placeholder="ej. MAT-101">
+                    </div>
+                    <div class="form-group">
+                        <label>Asignar Docente</label>
+                        <select name="id_docente" required>
+                            <option value="">-- Seleccionar Docente --</option>
+                            <% docentes.forEach(doc => { %>
+                                <option value="<%= doc.id %>"><%= doc.nombre %> (<%= doc.email %>)</option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-primary">Guardar Curso</button>
+                </form>
+            </section>
+
+            <!-- Sección: Matricular Estudiantes -->
+            <section id="matriculas" class="card">
+                <h2>Matricular Estudiante en Curso</h2>
+                <form action="/admin/matricular" method="POST" style="margin-top: 1rem;">
+                    <div class="form-group">
+                        <label>Estudiante</label>
+                        <select name="id_estudiante" required>
+                            <option value="">-- Seleccionar Estudiante --</option>
+                            <% estudiantes.forEach(est => { %>
+                                <option value="<%= est.id %>"><%= est.nombre %> (<%= est.email %>)</option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Curso</label>
+                        <select name="id_curso" required>
+                            <option value="">-- Seleccionar Curso --</option>
+                            <% cursos.forEach(cur => { %>
+                                <option value="<%= cur.id %>"><%= cur.codigo %> - <%= cur.nombre %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Ciclo Escolar</label>
+                        <select name="id_ciclo" required>
+                            <option value="">-- Seleccionar Ciclo --</option>
+                            <% ciclos.forEach(cic => { %>
+                                <option value="<%= cic.id %>"><%= cic.nombre %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-primary">Realizar Matriculación</button>
+                </form>
+            </section>
+                    <!-- Sección: Publicar Notificación de Pagos e Inscripciones -->
+                    <section id="notificaciones-pagos" class="card">
+    <h2>Publicar Notificación de Pagos e Inscripción</h2>
+    <form action="/admin/crear-notificacion-pago" method="POST" style="margin-top: 1rem;">
+        <div class="form-group">
+            <label>Título de la Notificación</label>
+            <input type="text" name="titulo" placeholder="ej. Periodo de Inscripción y Colegiatura Semestre 2026-1" required>
+        </div>
+        <div class="form-group">
+            <label>Monto General ($ MXN)</label>
+            <input type="number" step="0.01" name="monto" placeholder="ej. 3500.00" required>
+        </div>
+        <div class="form-group">
+            <label>Fecha Límite de Pago</label>
+            <input type="date" name="fecha_limite" required>
+        </div>
+        <div class="form-group">
+            <label>Mensaje / Detalle de la Notificación</label>
+            <textarea name="mensaje" rows="3" style="width: 100%; padding: 0.5rem;" placeholder="Estimado alumno, se le informa que el periodo de inscripción inicia..." required></textarea>
+        </div>
+        <button type="submit" class="btn-primary">Publicar Notificación de Pago</button>
+    </form>
+            </section>
+            <!-- Sección: Reportes Generales -->
+            <section id="reportes" class="card">
+                <h2>Reporte General del Sistema</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Categoría</th>
+                            <th>Total Registrados</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Estudiantes</td>
+                            <td><%= estudiantes.length %></td>
+                        </tr>
+                        <tr>
+                            <td>Docentes</td>
+                            <td><%= docentes.length %></td>
+                        </tr>
+                        <tr>
+                            <td>Cursos Activos</td>
+                            <td><%= cursos.length %></td>
+                        </tr>
+                        <tr>
+                            <td>Ciclos Creados</td>
+                            <td><%= ciclos.length %></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
